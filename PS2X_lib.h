@@ -81,25 +81,25 @@ GNU General Public License for more details.
   #define PS2X_lib_h
 
 #if ARDUINO > 22
-  #include "Arduino.h"
+    #include "Arduino.h"
 #else
-  #include "WProgram.h"
+    #include "WProgram.h"
 #endif
 
 #include <math.h>
 #include <stdio.h>
 #include <stdint.h>
 #ifdef __AVR__
-  // AVR
-  #include <avr/io.h>
-  #define CTRL_CLK        100 //4 Valeur modifié
-  #define CTRL_BYTE_DELAY 100 //3 Valeur modifié
+    // AVR
+    #include <avr/io.h>
+    #define CTRL_CLK        100 //4 Valeur modifié
+    #define CTRL_BYTE_DELAY 100 //3 Valeur modifié
 #else
-  // Pic32...
-  #include <pins_arduino.h>
-  #define CTRL_CLK        5
-  #define CTRL_CLK_HIGH   5
-  #define CTRL_BYTE_DELAY 4
+    // Pic32...
+    #include <pins_arduino.h>
+    #define CTRL_CLK        5
+    #define CTRL_CLK_HIGH   5
+    #define CTRL_BYTE_DELAY 4
 #endif 
 
 //Représente les constantes des boutons
@@ -166,8 +166,8 @@ GNU General Public License for more details.
 
 // classe PS2X (appartient au C++)
 class PS2X {
-  // Méthodes (fonctions) accessibles depuis l'objet créée à partir de la classe
-  public:
+    // Méthodes (fonctions) accessibles depuis l'objet créée à partir de la classe
+public:
     PS2X();
     boolean Button(uint16_t);                // renvoi vrai si un bouton est en train d'être pressé
     unsigned int ButtonDataByte();
@@ -210,12 +210,12 @@ class PS2X {
     byte getMinBound(byte const axis);
     byte getMaxBound(byte const axis);
 
-  // Membres (variables) et méthodes (fonctions) accessibles uniquement à l'intérieur de la classe
-  private:
+    // Membres (variables) et méthodes (fonctions) accessibles uniquement à l'intérieur de la classe
+private:
     struct BoundsTolerance
     {
-      byte lower;
-      byte upper;
+        byte lower;
+        byte upper;
     };
     void initTolerance(BoundsTolerance &tolerance);
 
@@ -226,7 +226,7 @@ class PS2X {
     inline void ATT_SET(void);
     inline void ATT_CLR(void);
     inline bool DAT_CHK(void);
-    
+
     unsigned char _gamepad_shiftinout(char); // envoi un char à la manette et en renvoi un char récupéré de la manette
     unsigned char PS2data[21];
     void sendCommandString(byte*, byte);
@@ -238,32 +238,32 @@ class PS2X {
     struct BoundsTolerance m_RXtolerance;
     struct BoundsTolerance m_RYtolerance;
     byte m_globalTolerance;
-	
+
     #ifdef __AVR__
-      uint8_t maskToBitNum(uint8_t);
-      uint8_t _clk_mask; 
-      volatile uint8_t *_clk_oreg;
-      uint8_t _cmd_mask; 
-      volatile uint8_t *_cmd_oreg;
-      uint8_t _att_mask; 
-      volatile uint8_t *_att_oreg;
-      uint8_t _dat_mask; 
-      volatile uint8_t *_dat_ireg;
+        uint8_t maskToBitNum(uint8_t);
+        uint8_t _clk_mask; 
+        volatile uint8_t *_clk_oreg;
+        uint8_t _cmd_mask; 
+        volatile uint8_t *_cmd_oreg;
+        uint8_t _att_mask; 
+        volatile uint8_t *_att_oreg;
+        uint8_t _dat_mask; 
+        volatile uint8_t *_dat_ireg;
     #else
-      uint8_t maskToBitNum(uint8_t);
-      uint16_t _clk_mask; 
-      volatile uint32_t *_clk_lport_set;
-      volatile uint32_t *_clk_lport_clr;
-      uint16_t _cmd_mask; 
-      volatile uint32_t *_cmd_lport_set;
-      volatile uint32_t *_cmd_lport_clr;
-      uint16_t _att_mask; 
-      volatile uint32_t *_att_lport_set;
-      volatile uint32_t *_att_lport_clr;
-      uint16_t _dat_mask; 
-      volatile uint32_t *_dat_lport;
+        uint8_t maskToBitNum(uint8_t);
+        uint16_t _clk_mask; 
+        volatile uint32_t *_clk_lport_set;
+        volatile uint32_t *_clk_lport_clr;
+        uint16_t _cmd_mask; 
+        volatile uint32_t *_cmd_lport_set;
+        volatile uint32_t *_cmd_lport_clr;
+        uint16_t _att_mask; 
+        volatile uint32_t *_att_lport_set;
+        volatile uint32_t *_att_lport_clr;
+        uint16_t _dat_mask; 
+        volatile uint32_t *_dat_lport;
     #endif
-	
+
     unsigned long last_read;
     byte read_delay;
     byte controller_type;
@@ -282,96 +282,95 @@ class PS2X {
 
 /****************************************************************************************/
 inline byte PS2X::getCorrectedAxis(byte const joystickAxis) {
-  if (!axisCentered(joystickAxis)) {
-    byte coord = Analog(joystickAxis);
-    if (m_LXtolerance.lower != 0 || m_LYtolerance.lower != 0 || m_RXtolerance.lower != 0 || m_RYtolerance.lower != 0) {
-      switch (joystickAxis) {
-        case PSS_LX:
-          if (coord < m_LXtolerance.lower)
-            return map(coord, m_LXtolerance.lower, 0, 0, 255);
-          else
-            return map(coord, m_LXtolerance.upper, 255, 0, 255);
-          break;
-        case PSS_LY:
-          if (coord < m_LYtolerance.lower)
-            return map(coord, m_LYtolerance.lower, 0, 0, 255);
-          else
-            return map(coord, m_LYtolerance.upper, 255, 0, 255);
-          break;
-        case PSS_RX:
-          if (coord < m_RXtolerance.lower)
-            return map(coord, m_RXtolerance.lower, 0, 0, 255);
-          else
-            return map(coord, m_RXtolerance.upper, 255, 0, 255);
-          break;
-        case PSS_RY:
-          if (coord < m_RYtolerance.lower)
-            return map(coord, m_RYtolerance.lower, 0, 0, 255);
-          else
-            return map(coord, m_RYtolerance.upper, 255, 0, 255);
-          break;
-      }
+    if (!axisCentered(joystickAxis)) {
+        byte coord = Analog(joystickAxis);
+        if (m_LXtolerance.lower != 0 || m_LYtolerance.lower != 0 || m_RXtolerance.lower != 0 || m_RYtolerance.lower != 0) {
+            switch (joystickAxis) {
+                case PSS_LX:
+                    if (coord < m_LXtolerance.lower)
+                        return map(coord, m_LXtolerance.lower, 0, 0, 255);
+                    else
+                        return map(coord, m_LXtolerance.upper, 255, 0, 255);
+                    break;
+                case PSS_LY:
+                    if (coord < m_LYtolerance.lower)
+                        return map(coord, m_LYtolerance.lower, 0, 0, 255);
+                    else
+                        return map(coord, m_LYtolerance.upper, 255, 0, 255);
+                    break;
+                case PSS_RX:
+                    if (coord < m_RXtolerance.lower)
+                        return map(coord, m_RXtolerance.lower, 0, 0, 255);
+                    else
+                        return map(coord, m_RXtolerance.upper, 255, 0, 255);
+                    break;
+                case PSS_RY:
+                    if (coord < m_RYtolerance.lower)
+                        return map(coord, m_RYtolerance.lower, 0, 0, 255);
+                    else
+                        return map(coord, m_RYtolerance.upper, 255, 0, 255);
+                    break;
+            }
+        }
+        else if (m_globalTolerance != 0) {
+            if (coord < 127)
+                return map(coord, 127 - m_globalTolerance, 0, 0, 255);
+            else
+                return map(coord, 127 + m_globalTolerance, 255, 0, 255);
+        }
+        else
+            return coord;
     }
-
-    else if (m_globalTolerance != 0) {
-      if (coord < 127)
-        return map(coord, 127 - m_globalTolerance, 0, 0, 255);
-      else
-        return map(coord, 127 + m_globalTolerance, 255, 0, 255);
-    }
-    else
-      return coord;
-  }
 
   return 0;
 }
 
 /****************************************************************************************/
 inline boolean PS2X::axisCentered(byte axis) {
-  if (m_LXtolerance.lower != 0 || m_LYtolerance.lower != 0 || m_RXtolerance.lower != 0 || m_RYtolerance.lower != 0) {
-    switch (axis) {
-    case PSS_LX:
-      if (Analog(PSS_LX) > m_LXtolerance.lower && Analog(PSS_LX) < m_LXtolerance.upper)
-        return true;
-      break;
-    case PSS_LY:
-      if (Analog(PSS_LY) > m_LYtolerance.lower && Analog(PSS_LY) < m_LYtolerance.upper)
-        return true;
-      break;
-    case PSS_RX:
-      if (Analog(PSS_RX) > m_RXtolerance.lower && Analog(PSS_RX) < m_RXtolerance.upper)
-        return true;
-      break;
-    case PSS_RY:
-      if (Analog(PSS_RY) > m_RYtolerance.lower && Analog(PSS_RY) < m_RYtolerance.upper)
-        return true;
-      break;
+    if (m_LXtolerance.lower != 0 || m_LYtolerance.lower != 0 || m_RXtolerance.lower != 0 || m_RYtolerance.lower != 0) {
+        switch (axis) {
+            case PSS_LX:
+                if (Analog(PSS_LX) > m_LXtolerance.lower && Analog(PSS_LX) < m_LXtolerance.upper)
+                return true;
+                break;
+            case PSS_LY:
+                if (Analog(PSS_LY) > m_LYtolerance.lower && Analog(PSS_LY) < m_LYtolerance.upper)
+                return true;
+                break;
+            case PSS_RX:
+                if (Analog(PSS_RX) > m_RXtolerance.lower && Analog(PSS_RX) < m_RXtolerance.upper)
+                return true;
+                break;
+            case PSS_RY:
+                if (Analog(PSS_RY) > m_RYtolerance.lower && Analog(PSS_RY) < m_RYtolerance.upper)
+                return true;
+                break;
+        }
     }
-  }
-  else if (m_globalTolerance != 0) {
-    return (Analog(axis) > 127 - m_globalTolerance && Analog(axis) < 127 + m_globalTolerance);
-  }
-  else
-    return (Analog(axis) == 127);
-  return false;
+    else if (m_globalTolerance != 0) {
+        return (Analog(axis) > 127 - m_globalTolerance && Analog(axis) < 127 + m_globalTolerance);
+    }
+    else
+        return (Analog(axis) == 127);
+    return false;
 }
 
 /****************************************************************************************/
 inline void PS2X::printAllAxis() {
-  byte axisLX = Analog(PSS_LX);
-  byte axisLY = Analog(PSS_LY);
-  byte axisRX = Analog(PSS_RX);
-  byte axisRY = Analog(PSS_RY);
+    byte axisLX = Analog(PSS_LX);
+    byte axisLY = Analog(PSS_LY);
+    byte axisRX = Analog(PSS_RX);
+    byte axisRY = Analog(PSS_RY);
 
-  Serial.print("Coordonnées: ");
-  Serial.print("axisLX: ");
-  Serial.print(axisLX, DEC);
-  Serial.print(" axisLY: ");
-  Serial.print(axisLY, DEC);
-  Serial.print(" axisRX: ");
-  Serial.print(axisRX, DEC);
-  Serial.print(" axisRY: ");
-  Serial.println(axisRY, DEC);
+    Serial.print("Coordonnées: ");
+    Serial.print("axisLX: ");
+    Serial.print(axisLX, DEC);
+    Serial.print(" axisLY: ");
+    Serial.print(axisLY, DEC);
+    Serial.print(" axisRX: ");
+    Serial.print(axisRX, DEC);
+    Serial.print(" axisRY: ");
+    Serial.println(axisRY, DEC);
 }
 
 #endif
