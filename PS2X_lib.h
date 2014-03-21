@@ -72,13 +72,14 @@ GNU General Public License for more details.
 *  
 ******************************************************************/
 
-// $$$$$$$$$$$$ DEBUG ENABLE SECTION $$$$$$$$$$$$$$$$
-// to debug ps2 controller, uncomment these two lines to print out debug to uart
+////////////////////////////////////////////////////////////
+// SECTION ACTIVATION DU DEBOGAGE
+////////////////////////////////////////////////////////////
 //#define PS2X_DEBUG
 //#define PS2X_COM_DEBUG
 
 #ifndef PS2X_lib_h
-  #define PS2X_lib_h
+    #define PS2X_lib_h
 
 #if ARDUINO > 22
     #include "Arduino.h"
@@ -102,7 +103,10 @@ GNU General Public License for more details.
     #define CTRL_BYTE_DELAY 4
 #endif 
 
-//Représente les constantes des boutons
+/** @name Boutons manette
+ *  Représente les constantes des boutons d'une manette
+ */
+///@{
 #define PSB_SELECT      0x0001
 #define PSB_L3          0x0002
 #define PSB_R3          0x0004
@@ -123,8 +127,12 @@ GNU General Public License for more details.
 #define PSB_CIRCLE      0x2000
 #define PSB_CROSS       0x4000
 #define PSB_SQUARE      0x8000
+///@}
 
-//Guitar  button constants
+/** @name Boutons Guitar Hero
+ *  Représente les boutons d'un controller Guitar Hero
+ */
+///@{
 #define UP_STRUM		0x0010
 #define DOWN_STRUM		0x0040
 #define STAR_POWER		0x0100
@@ -134,14 +142,23 @@ GNU General Public License for more details.
 #define BLUE_FRET		0x4000
 #define ORANGE_FRET		0x8000
 #define WHAMMY_BAR		8
+///@}
 
-//Valeurs des joysticks
+/** @name Joystick manette
+ *  Représente les joysticks de la manette
+ */
+///@{
 #define PSS_RX 5
 #define PSS_RY 6
 #define PSS_LX 7
 #define PSS_LY 8
+///@}
 
-//Représente les boutons analogiques
+/** @name Boutons analogiques manette
+ *  Représente les versions analogique des boutons de la manette
+ * \see pressures
+ */
+///@{
 #define PSAB_PAD_RIGHT    9
 #define PSAB_PAD_UP      11
 #define PSAB_PAD_DOWN    12
@@ -158,56 +175,290 @@ GNU General Public License for more details.
 #define PSAB_CIRCLE      14
 #define PSAB_CROSS       15
 #define PSAB_SQUARE      16
+///@}
 
 #define SET(x,y) (x|=(1<<y))
 #define CLR(x,y) (x&=(~(1<<y)))
 #define CHK(x,y) (x & (1<<y))
 #define TOG(x,y) (x^=(1<<y))
 
-// classe PS2X (appartient au C++)
 class PS2X {
     // Méthodes (fonctions) accessibles depuis l'objet créée à partir de la classe
 public:
+    ////////////////////////////////////////////////////////////
+    /// \brief Constructeur, initialise certaines variables
+    ///
+    ////////////////////////////////////////////////////////////
     PS2X();
-    boolean Button(uint16_t);                // renvoi vrai si un bouton est en train d'être pressé
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Permet de savoir si le bouton en question est en train
+    /// d'être appuyé.
+    ///
+    /// \param button Correspond à une constante représentant un bouton
+    ///
+    /// \return true si appuyé, sinon false
+    ///
+    /// \see Boutons manette
+    ///
+    ////////////////////////////////////////////////////////////
+    boolean Button(uint16_t button);
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Fonction inconnu et inutilisé
+    ///
+    ////////////////////////////////////////////////////////////
     unsigned int ButtonDataByte();
-    boolean NewButtonState();                // renvoi vrai si un bouton a changer d'état (vient juste d'être pressé ou relâché)
-    boolean NewButtonState(unsigned int);    // renvoi vrai si le bouton a changer d'état (vient juste d'être pressé ou relâché)
-    boolean ButtonPressed(unsigned int);     // renvoi vrai si le bouton viens juste d'être pressé
-    boolean ButtonReleased(unsigned int);    // renvoi vrai si le bouton viens juste d'être relâché
-    void read_gamepad();                     // a appelé au moins une fois par seconde
-    boolean  read_gamepad(boolean, byte);
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Permet de savoir un des boutons de la manette à
+    /// changé d'état.
+    ///
+    /// \return true si un bouton à changé d'état, sinon false
+    ///
+    ////////////////////////////////////////////////////////////
+    boolean NewButtonState();
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Permet de savoir si le bouton en question à changé d'état.
+    ///
+    /// \param button Correspond à une constante représentant un bouton
+    ///
+    /// \return true si le bouton a changé d'état, sinon false
+    ///
+    /// \see Boutons manette
+    ///
+    ////////////////////////////////////////////////////////////
+    boolean NewButtonState(unsigned int button);
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Permet de savoir si le bouton en question viens juste
+    /// d'être appuyé.
+    ///
+    /// \param button Correspond à une constante représentant un bouton
+    ///
+    /// \return true si vient juste d'être préssé, sinon false
+    ///
+    /// \see Boutons manette
+    ///
+    ////////////////////////////////////////////////////////////
+    boolean ButtonPressed(unsigned int button);
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Permet de savoir si le bouton en question viens juste
+    /// d'être relâché.
+    ///
+    /// \param button Correspond à une constante représentant un bouton
+    ///
+    /// \return true si vient juste d'être relâché, sinon false
+    ///
+    /// \see Boutons manette
+    ///
+    ////////////////////////////////////////////////////////////
+    boolean ButtonReleased(unsigned int button);
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Permet de lire les données venant de la manette.
+    /// A appeler au moins une fois par seconde.
+    ///
+    ////////////////////////////////////////////////////////////
+    void read_gamepad();
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Permet de lire les données venant de la manette.
+    /// A appeler au moins une fois par seconde.
+    ///
+    /// \param motor1 true -> fait vibrer les moteurs de la manette, false -> les arrêtent
+    /// \param motor2 Valeur de la PWM des moteurs (automatiquement calibrer à 40mini)
+    ///
+    /// \return true si la manette est OK (toujours en mode analogique), sinon false
+    ///
+    ////////////////////////////////////////////////////////////
+    boolean  read_gamepad(boolean motor1, byte motor2);
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Permet de lire le type de manette connecté.
+    ///
+    /// \return Le type de manette lu.
+    ///
+    ////////////////////////////////////////////////////////////
     byte readType();
-    byte config_gamepad(uint8_t, uint8_t, uint8_t, uint8_t);
-    byte config_gamepad(uint8_t, uint8_t, uint8_t, uint8_t, bool, bool);
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Permet de configurer les pins sur lesquelles la
+    /// manette est connecté.
+    ///
+    /// \param clk Pin correspondant à l'horloge
+    /// \param cmd Pin correspondant à la commande
+    /// \param att Pin correspondant à l'attention ou selection
+    /// \param dat Pin correspondant à data
+    ///
+    /// \return Un code d'erreur
+    ///
+    ////////////////////////////////////////////////////////////
+    byte config_gamepad(uint8_t clk, uint8_t cmd, uint8_t att, uint8_t dat);
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Permet de configurer les pins sur lesquelles la
+    /// manette est connecté.
+    ///
+    /// \param clk Pin correspondant à l'horloge
+    /// \param cmd Pin correspondant à la commande
+    /// \param att Pin correspondant à l'attention ou selection
+    /// \param dat Pin correspondant à data
+    /// \param pressures true -> active le retour de valeurs analogiques pour tous les bouton, false -> désactive le retour
+    /// \param rumble true -> autorise la vibration de la manette, false -> interdit la vibration de la manette
+    ///
+    /// \return Un code d'erreur
+    ///
+    ////////////////////////////////////////////////////////////
+    byte config_gamepad(uint8_t clk, uint8_t cmd, uint8_t att, uint8_t dat, bool pressures, bool rumble);
+
     void enableRumble();
     bool enablePressures();
-    byte Analog(byte);
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Permet de lire une données de type analogique.
+    ///
+    /// \param button Correspond à une constante représentant un bouton ayant un retour analogique ou à un joystick
+    ///
+    /// \return Une comprise entre 0-255 (0 -> bouton non appuyé, <0 bouton appuyé)
+    ///
+    ////////////////////////////////////////////////////////////
+    byte Analog(byte button);
+
     void reconfig_gamepad();
-    void printCheckError(byte);              // affiche les erreurs possibles ou si tout s'est bien passé
-    void printCheckControllerType(byte);     // affiche le type de controller trouvé
-    /******************************************************************
-    * déclaration et définition d'une fonction permettant de
-    * simplifier l'acquisition de la position du joystick, le centre
-    * représentant maintenant 0 et ses bords le maximum (255)
-    * arg:
-    * -joystickAxis: cette valeur représente l'ID du joystick concerné
-    * ainsi que l'axe voulu. Il faut utilisé les constantes de la
-    * bibliothèque PS2X (PSS_RX, PSS_RY, PSS_LX, PSS_LY)
-    * ATTENTION: cette fonction prend en compte 'joystickTolerance'
-    ******************************************************************/
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Permet d'avoir un retour via la console arduino
+    /// des erreurs possible.
+    ///
+    /// \param error Le code d'erreur
+    ///
+    /// \see config_gamepad
+    ///
+    ////////////////////////////////////////////////////////////
+    void printCheckError(byte error);
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Permet d'avoir un retour via la console arduino
+    /// du type de manette.
+    ///
+    /// \param type Le type de manette
+    ///
+    /// \see readType
+    ///
+    ////////////////////////////////////////////////////////////
+    void printCheckControllerType(byte type);
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Permet d'avoir la valeur de l'axe d'un joystick
+    /// corrigé (le milieu représente désormais 0 au lieu de 127 et les bords 255).
+    /// Cette fonction prend en compte les possibles tolérance mise
+    ///
+    /// \param joystickAxis Le type de manette
+    ///
+    /// \return La valeur correctement mappé
+    ///
+    /// \see setAllAxisTolerance
+    /// \see setAxisTolerance
+    ///
+    ////////////////////////////////////////////////////////////
     inline byte getCorrectedAxis(byte const joystickAxis);
-    /* ///!!ATTENTION!!\\\ */
-    /* si une tolérance pour les joystick doit être paramétré, n'appeler QU'UNE
-    des 3 fonctions ci-dessous */
-    void setAxisTolerance(byte axis, byte lowerBound, byte upperBound); // si appel de cette fonction, obligation de définir
-                                                                        // les limites pour tout les axes utilisé (4 à définir)
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Permet de préciser une tolérance pour un axe d'un
+    /// joystick précis. Attention, si cette fonction est appelé
+    /// pour un axe d'un joystick, elle doit être aussi pour tous les
+    /// autre (donc cette fonction doit être toujours appelé 4fois au total).
+    ///
+    /// ATTENTION: une seul fonction précisant la tolérance doit être appelé:
+    /// 4x setAxisTolerance(byte axis, byte lowerBound, byte upperBound); ou
+    /// setAllAxisTolerance(byte lowerBound, byte upperBound); ou
+    /// setAllAxisTolerance(byte tolerance);
+    ///
+    /// \param axis Représente l'axe en question
+    /// \param lowerBound Représente la borne minimal avant de ne plus être centré
+    /// \param upperBound Représente la borne maximal avant de ne plus être centré
+    ///
+    /// \see setAllAxisTolerance
+    ///
+    ////////////////////////////////////////////////////////////
+    void setAxisTolerance(byte axis, byte lowerBound, byte upperBound);
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Permet de préciser une tolérance pour tous les axes en
+    /// précisant la borne minimal et maximal
+    ///
+    /// ATTENTION: une seul fonction précisant la tolérance doit être appelé:
+    /// 4x setAxisTolerance(byte axis, byte lowerBound, byte upperBound); ou
+    /// setAllAxisTolerance(byte lowerBound, byte upperBound); ou
+    /// setAllAxisTolerance(byte tolerance);
+    ///
+    /// \param lowerBound Représente la borne minimal avant de ne plus être centré
+    /// \param upperBound Représente la borne maximal avant de ne plus être centré
+    ///
+    /// \see setAxisTolerance
+    ///
+    ////////////////////////////////////////////////////////////
     void setAllAxisTolerance(byte lowerBound, byte upperBound);
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Permet de préciser une tolérance pour tous les axes.
+    ///
+    /// ATTENTION: une seul fonction précisant la tolérance doit être appelé:
+    /// 4x setAxisTolerance(byte axis, byte lowerBound, byte upperBound); ou
+    /// setAllAxisTolerance(byte lowerBound, byte upperBound); ou
+    /// setAllAxisTolerance(byte tolerance);
+    ///
+    /// \param tolerance Tolerance à appliquer
+    ///
+    /// \see setAxisTolerance
+    ///
+    ////////////////////////////////////////////////////////////
     void setAllAxisTolerance(byte tolerance);
-    inline boolean axisCentered(byte); // renvoi si l'axe en question est en position central, prend en compte la tolérance si
-                                // elle a été défini
-    inline void printAllAxis();  // permet d'avoir les positions actuelles de tous les axe par la console arduino
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Permet de savoir si le joystick est centré, prend en compte
+    /// la tolérance si cette dernière a été défini.
+    ///
+    /// \param axis Représente le joystick et l'axe en question
+    ///
+    /// \see setAllAxisTolerance
+    /// \see setAxisTolerance
+    ///
+    ////////////////////////////////////////////////////////////
+    inline boolean axisCentered(byte axis);
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Permet d'avoir un retour des coordonnées de tous les
+    /// axis de la manette via la console d'arduino.
+    ///
+    ////////////////////////////////////////////////////////////
+    inline void printAllAxis();
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Permet d'avoir la borne minimal de l'axe. Prend en compte
+    /// la tolérance si cette dernière a été précisé
+    ///
+    /// \param axis Représente le joystick et l'axe en question
+    ///
+    /// \see setAllAxisTolerance
+    /// \see setAxisTolerance
+    ///
+    ////////////////////////////////////////////////////////////
     byte getMinBound(byte const axis);
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Permet d'avoir la borne maximal de l'axe. Prend en compte
+    /// la tolérance si cette dernière a été précisé
+    ///
+    /// \param axis Représente le joystick et l'axe en question
+    ///
+    /// \see setAllAxisTolerance
+    /// \see setAxisTolerance
+    ///
+    ////////////////////////////////////////////////////////////
     byte getMaxBound(byte const axis);
 
     // Membres (variables) et méthodes (fonctions) accessibles uniquement à l'intérieur de la classe
@@ -271,14 +522,15 @@ private:
     boolean en_Pressures;
 };
 
-/******************************************************************
-* Définition des fonctions inline appelé hors de la classe ici
-* sinon lors de la résolution des liens: 'erreur fonction non défini'
-* Le mot clé inline est l'équivalent d'une macro fait avec un define.
-* Cela permet d'optimiser le programme mais il faut l'utilisé avec
-* parcimonie car cela augmente la taille du programme et peut avoir
-* l'effet inverse d'une optimisation et donc ralentir le programme.
-******************************************************************/
+////////////////////////////////////////////////////////////
+// Définition des fonctions inline appelé hors de la classe ici
+// sinon lors de la résolution des liens: 'erreur fonction non défini'
+// Le mot clé inline est l'équivalent d'une macro fait avec un define.
+// Cela permet d'optimiser le programme mais il faut l'utilisé avec
+// parcimonie car cela augmente la taille du programme et peut avoir
+// l'effet inverse d'une optimisation et donc ralentir le programme.
+//
+////////////////////////////////////////////////////////////
 
 /****************************************************************************************/
 inline byte PS2X::getCorrectedAxis(byte const joystickAxis) {
@@ -375,5 +627,21 @@ inline void PS2X::printAllAxis() {
 
 #endif
 
-
-
+////////////////////////////////////////////////////////////
+/// \class PS2X
+/// 
+/// La classe PS2X permet de contrôler des manettes PS2 comme
+/// un controller pour Guitar Hero.
+/// Elle a été trouvé sur le site www.billporter.info, et
+/// modifié pour correspondre à nos besoins.
+///
+/// Cette bibliothéque a un mode debug qui permet d'écrire
+/// tous les signaux transmit et reçu entre l'arduino et la
+/// manette. Pour l'activer il faut aller modifié le .h même
+/// de la bibliothéque et décommenter les lignes:
+/// \code
+/// //#define PS2X_DEBUG
+/// //#define PS2X_COM_DEBUG
+/// \endcode
+///
+////////////////////////////////////////////////////////////
