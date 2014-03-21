@@ -8,6 +8,7 @@
 
 PS2X	KEYWORD1
 Motor	KEYWORD1
+Relais  KEYWORD1
 
 #######################################
 # Methods and Functions (KEYWORD2)
