@@ -13,12 +13,12 @@
 class Relais {
 public:
 	////////////////////////////////////////////////////////////
-    /// \brief Initialise la pin en sorti
+    /// \brief Constructeur, initialise la pin en sortie
     ///
     /// \param pin Numéro de pin correspondant au relais
     ///
     ////////////////////////////////////////////////////////////
-	void setup(byte const pin);
+	Relais(byte const pin);
 
 	////////////////////////////////////////////////////////////
     /// \brief Permet de changer l'état du relais (ouvert ou fermé)
@@ -44,7 +44,7 @@ private:
 	////////////////////////////////////////////////////////////
     /// Variables membre
     ////////////////////////////////////////////////////////////
-	byte m_pin; ///<  Stocke la pin correspondant au relais
+	const byte m_pin; ///<  Stocke la pin correspondant au relais
 	byte m_state; ///<  Stocke l'état actuel du relais
 };
 

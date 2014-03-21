@@ -2,11 +2,9 @@
 #include "Motor.h"
 
 
-void Motor::setup(byte const pwmPin, byte const dirPin) {
+Motor::Motor(byte const pwmPin, byte const dirPin) : m_motorPin(pwmPin), m_dirPin(dirPin) {
 	pinMode(pwmPin, OUTPUT);
 	pinMode(dirPin, OUTPUT);
-	m_motorPin = pwmPin;
-	m_dirPin = dirPin;
 	m_direction = CLOCKWISE;
 	m_speed = 0;
 }

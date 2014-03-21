@@ -1,8 +1,7 @@
 #include "Relais.h"
 
-void Relais::setup(byte const pin) {
+Relais::Relais(byte const pin) : m_pin(pin) {
 	pinMode(pin, OUTPUT);
-	m_pin = pin;
 }
 
 void Relais::setState(byte const state) {

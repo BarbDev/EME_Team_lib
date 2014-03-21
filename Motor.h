@@ -20,7 +20,7 @@ public:
     /// \param dirPin Numéro de pin correspondant à la DIRECTION du moteur
     ///
     ////////////////////////////////////////////////////////////
-	void setup(byte const pwmPin, byte const dirPin);
+	void Motor(byte const pwmPin, byte const dirPin);
 
 	////////////////////////////////////////////////////////////
     /// \brief Permet de changer le sens de rotation du moteur
@@ -78,8 +78,8 @@ private:
     ////////////////////////////////////////////////////////////
     /// Variables membre
     ////////////////////////////////////////////////////////////
-	byte m_motorPin; ///<  Stocke le n° de pin sur laquelle envoyer la PWM au moteur
-	byte m_dirPin; ///<  Stocke le n° de pin sur laquelle envoyer la direction au moteur
+	const byte m_motorPin; ///<  Stocke le n° de pin sur laquelle envoyer la PWM au moteur
+	const byte m_dirPin; ///<  Stocke le n° de pin sur laquelle envoyer la direction au moteur
 	MOTORDIR m_direction; ///<  Stocke le sens de rotation actuel du moteur
 	byte m_speed; ///<  Stocke la PWM actuel du moteur
 };
