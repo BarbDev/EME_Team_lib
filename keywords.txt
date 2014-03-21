@@ -7,6 +7,7 @@
 #######################################
 
 PS2X	KEYWORD1
+Motor	KEYWORD1
 
 #######################################
 # Methods and Functions (KEYWORD2)
@@ -21,6 +22,16 @@ config_gamepad	KEYWORD2
 enableRumble	KEYWORD2
 enablePressures	KEYWORD2
 Analog	KEYWORD2
+
+setDir	KEYWORD2
+setSpeed	KEYWORD2
+getDir	KEYWORD2
+getSpeed	KEYWORD2
+stop	KEYWORD2
+invertDir	KEYWORD2
+update	KEYWORD2
+setState	KEYWORD2
+changeState	KEYWORD2
 
 #######################################
 # Constants (LITERAL1)
@@ -76,3 +87,21 @@ STAR_POWER LITERAL1
 UP_STRUM LITERAL1
 DOWN_STRUM LITERAL1
 WHAMMY_BAR LITERAL1
+
+TANK_TYPE	LITERAL1
+REGULAR	LITERAL1
+NORMAL	LITERAL1
+INVERTED	LITERAL1
+CLOCKWISE	LITERAL1
+ANTI_CLOCKWISE	LITERAL1
+
+PS2_DAT	LITERAL1
+PS2_CMD	LITERAL1
+PS2_SEL	LITERAL1
+PS2_CLK	LITERAL1
+
+pressures	LITERAL1
+rumble	LITERAL1
+
+VITESSE_MAX	LITERAL1
+VITESSE_MIN	LITERAL1
