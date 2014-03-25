@@ -1,4 +1,3 @@
-#include "constantes.h"
 #include "Motor.h"
 
 
@@ -26,7 +25,7 @@ byte Motor::getSpeed() const {
 }
 
 void Motor::stop() {
-	setSpeed(VITESSE_MIN);
+	setSpeed(0);
 }
 
 void Motor::invertDir() {
