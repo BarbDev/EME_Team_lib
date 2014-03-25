@@ -16,6 +16,10 @@ void Motor::setSpeed(byte const speed) {
 	m_speed = speed;
 }
 
+void Motor::incrementSpeed(byte const increment) {
+	m_speed = m_speed + increment;
+}
+
 MOTORDIR Motor::getDir() const {
 	return m_direction;
 }

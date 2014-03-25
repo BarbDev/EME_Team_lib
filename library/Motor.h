@@ -38,6 +38,14 @@ public:
     ////////////////////////////////////////////////////////////
 	void setSpeed(byte const speed);
 
+    ////////////////////////////////////////////////////////////
+    /// \brief Permet d'augmenter la PWM du moteur de 1
+    ///
+    /// \param increment Paramètre non obligatoire, permet de préciser l'incrémentation, par défaut à 1
+    ///
+    ////////////////////////////////////////////////////////////
+    void incrementSpeed(byte const increment = 1);
+
 	////////////////////////////////////////////////////////////
     /// \brief Permet d'obtenir le sens de rotation actuel du moteur
     ///
