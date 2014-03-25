@@ -37,7 +37,7 @@
 #define DIR_PIN_MOTOR_2 7
 ///@}
 
-/** @name Direction moteur
+/** @name Servomoteur
  *  Sélection des pins des servomoteurs du robot
  */
 ///@{
