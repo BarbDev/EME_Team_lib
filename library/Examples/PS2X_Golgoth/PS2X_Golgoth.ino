@@ -3,13 +3,15 @@
 ////////////////////////////////////////////////////////////
 #include <PS2X_lib.h>
 #include <Servo.h>
-#include "types.h"
+#include <Motor.h>
+#include <types.h>
 #include "constantes.h"
-#include "Robot.h"
 
-PS2X ps2x; // création d'une classe de type PS2X
+PS2X manette; // création d'une classe de type manette
 
-Robot robot;
+Motor moteurGauche(PWM_PIN_MOTOR_1, DIR_PIN_MOTOR_1);
+Motor moteurDroit(PWM_PIN_MOTOR_2, DIR_PIN_MOTOR_2);
+Servo servo1, servo2;
 
 ////////////////////////////////////////////////////////////
 // ATTENTION:
@@ -30,13 +32,14 @@ void setup() {
     Serial.begin(57600); // définition de la vitesse de transmission pour pouvoir communiquer avec le PC et avoir un retour sur la console
 
     // définition des pins et paramètre et vérification des erreurs: GamePad(clock, command, attention, data, Pressures?, Rumble?)
-    error = ps2x.config_gamepad(PS2_CLK, PS2_CMD, PS2_SEL, PS2_DAT, pressures, rumble);
-    PS2X::printCheckError(error); // Permet le retour d'éventuelles erreurs dans la console arduino
+    error = manette.config_gamepad(PS2_CLK, PS2_CMD, PS2_SEL, PS2_DAT, pressures, rumble);
+    manette.printCheckError(error); // Permet le retour d'éventuelles erreurs dans la console arduino
 
-    type = ps2x.readType(); 
-    PS2X::printCheckControllerType(type); // Permet d'avoir le retour du type de controller dans la console arduino
+    type = manette.readType(); 
+    manette.printCheckControllerType(type); // Permet d'avoir le retour du type de controller dans la console arduino
 
-    robot.setup(PWM_PIN_MOTOR_1, DIR_PIN_MOTOR_1, PWM_PIN_MOTOR_2, DIR_PIN_MOTOR_2, PIN_SERVO_1, PIN_SERVO_2);
+    servo1.attach(PIN_SERVO_1, 0, 179);
+    servo2.attach(PIN_SERVO_2, 0, 179);
 }
 
 
@@ -44,9 +47,9 @@ void loop() {
 
     ////////////////////////////////////////////////////////////
     // on doit lire la manette pour recevoir les nouvelles valeurs,
-    // ainsi que pour définir les vibrations ps2x.read_gamepad(small motor
+    // ainsi que pour définir les vibrations manette.read_gamepad(small motor
     // on/off,larger motor strenght from 0-255)
-    // si rumble est a false, appeler simplement ps2x.read_gamepad();
+    // si rumble est a false, appeler simplement manette.read_gamepad();
     // il faudrait lire la manette au moins une fois toutes les secondes
     ////////////////////////////////////////////////////////////
 
@@ -55,15 +58,42 @@ void loop() {
         delay(5000); // fait attendre le micro-contôleur pour évité qu'il tourne pour rien.
 
     else if (type == 1 || type == 3) { //DualShock Controller (avec ou sans fil trouvée)
-        ps2x.read_gamepad(); // lit les données de la manette
+        manette.read_gamepad(); // lit les données de la manette
 
-        if (ps2x.Button(PSB_TRIANGLE))
-            robot.setCommandType(NORMAL);
-        else if (ps2x.Button(PSB_CIRCLE))
-            robot.setCommandType(INVERTED);
+        if (manette.Analog(PSS_RY) == 255) {
+            moteurDroit.incrementSpeed(5);
+            moteurDroit.setDir(CLOCKWISE);
+        }
+        else if (manette.Analog(PSS_RY) == 0) {
+            moteurDroit.incrementSpeed(5);
+            moteurDroit.setDir(ANTI_CLOCKWISE);
+        }
+        else
+            moteurDroit.stop();
 
-        robot.processCommand(ps2x);
-        //ps2x.printAllAxis();
+        if (manette.Analog(PSS_LY) == 255) {
+            moteurGauche.incrementSpeed(5);
+            moteurGauche.setDir(CLOCKWISE);
+        }
+        else if (manette.Analog(PSS_LY) == 0) {
+            moteurGauche.incrementSpeed(5);
+            moteurGauche.setDir(ANTI_CLOCKWISE);
+        }
+        else
+            moteurGauche.stop();
+
+        if (manette.Button(PSB_L1))
+            servo1.write(0);
+        else if (manette.Button(PSB_L2))
+            servo1.write(179);
+
+        if (manette.Button(PSB_R1))
+            servo2.write(0);
+        else if (manette.Button(PSB_R2))
+            servo2.write(179);
+
+        moteurGauche.update();
+        moteurDroit.update();
 
         delay(50);  // attend 50ms~
     }
