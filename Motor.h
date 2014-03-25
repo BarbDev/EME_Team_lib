@@ -20,7 +20,7 @@ public:
     /// \param dirPin Numéro de pin correspondant à la DIRECTION du moteur
     ///
     ////////////////////////////////////////////////////////////
-	void Motor(byte const pwmPin, byte const dirPin);
+	Motor(byte const pwmPin, byte const dirPin);
 
 	////////////////////////////////////////////////////////////
     /// \brief Permet de changer le sens de rotation du moteur
