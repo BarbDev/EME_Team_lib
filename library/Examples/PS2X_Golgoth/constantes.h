@@ -49,7 +49,7 @@
  */
 ///@{
 #define VITESSE_MAX 255
-#define VITESSE_MIN 34
+#define VITESSE_MIN 0
 ///@}
 
 #endif // !CONSTANTES_H
