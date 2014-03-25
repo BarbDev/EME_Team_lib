@@ -8,6 +8,10 @@ void Relais::setState(byte const state) {
 	m_state = state;
 }
 
+byte Relais::getState() const {
+	return m_state;
+}
+
 void Relais::changeState() {
 	if (m_state == HIGH)
 		m_state = LOW;
