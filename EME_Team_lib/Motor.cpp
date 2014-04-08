@@ -17,7 +17,10 @@ void Motor::setSpeed(byte const speed) {
 }
 
 void Motor::incrementSpeed(byte const increment) {
-	m_speed = m_speed + increment;
+	if (m_speed + increment > 255)
+		m_speed = 255;
+	else
+		m_speed = m_speed + increment;
 }
 
 MOTORDIR Motor::getDir() const {
