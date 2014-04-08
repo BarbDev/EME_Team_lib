@@ -1,6 +1,6 @@
 #include "Relais.h"
 
-Relais::Relais(byte const pin) : m_pin(pin) {
+Relais::Relais(byte const pin) : m_pin(pin), m_state(LOW) {
 	pinMode(pin, OUTPUT);
 }
 
