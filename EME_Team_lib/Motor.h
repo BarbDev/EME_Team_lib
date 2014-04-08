@@ -18,9 +18,10 @@ public:
     ///
     /// \param pwmPin Numéro de pin correspondant à la PWM du moteur
     /// \param dirPin Numéro de pin correspondant à la DIRECTION du moteur
+    /// \param autoUpdate Indique si le relais se met à jour dès son changement d'état
     ///
     ////////////////////////////////////////////////////////////
-	Motor(byte const pwmPin, byte const dirPin);
+	Motor(byte const pwmPin, byte const dirPin, boolean const autoUpdate = false);
 
 	////////////////////////////////////////////////////////////
     /// \brief Permet de changer le sens de rotation du moteur
@@ -90,6 +91,7 @@ private:
 	const byte m_dirPin; ///<  Stocke le n° de pin sur laquelle envoyer la direction au moteur
 	MOTORDIR m_direction; ///<  Stocke le sens de rotation actuel du moteur
 	byte m_speed; ///<  Stocke la PWM actuel du moteur
+    boolean m_autoUpdate; ///<  Stocke si l'auto-update est actif ou non
 };
 
 #endif // !MOTOR_H

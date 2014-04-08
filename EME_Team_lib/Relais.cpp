@@ -1,11 +1,13 @@
 #include "Relais.h"
 
-Relais::Relais(byte const pin) : m_pin(pin), m_state(LOW) {
+Relais::Relais(byte const pin, boolean const autoUpdate) : m_pin(pin), m_state(LOW), m_autoUpdate(autoUpdate) {
 	pinMode(pin, OUTPUT);
 }
 
 void Relais::setState(byte const state) {
 	m_state = state;
+	if (m_autoUpdate)
+		update();
 }
 
 byte Relais::getState() const {
@@ -17,6 +19,8 @@ void Relais::changeState() {
 		m_state = LOW;
 	else
 		m_state = HIGH;
+	if (m_autoUpdate)
+		update();
 }
 
 void Relais::update() {

@@ -16,9 +16,10 @@ public:
     /// \brief Constructeur, initialise la pin en sortie
     ///
     /// \param pin Numéro de pin correspondant au relais
+    /// \param autoUpdate Indique si le relais se met à jour dès son changement d'état
     ///
     ////////////////////////////////////////////////////////////
-	Relais(byte const pin);
+	Relais(byte const pin, boolean const autoUpdate = false);
 
 	////////////////////////////////////////////////////////////
     /// \brief Permet de changer l'état du relais (ouvert ou fermé)
@@ -54,6 +55,7 @@ private:
     ////////////////////////////////////////////////////////////
 	const byte m_pin; ///<  Stocke la pin correspondant au relais
 	byte m_state; ///<  Stocke l'état actuel du relais
+    boolean m_autoUpdate; ///<  Stocke si l'auto-update est actif ou non
 };
 
 #endif

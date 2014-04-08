@@ -1,7 +1,7 @@
 #include "Motor.h"
 
 
-Motor::Motor(byte const pwmPin, byte const dirPin) : m_motorPin(pwmPin), m_dirPin(dirPin) {
+Motor::Motor(byte const pwmPin, byte const dirPin, boolean const autoUpdate) : m_motorPin(pwmPin), m_dirPin(dirPin), m_autoUpdate(autoUpdate) {
 	pinMode(pwmPin, OUTPUT);
 	pinMode(dirPin, OUTPUT);
 	m_direction = CLOCKWISE;
@@ -10,10 +10,14 @@ Motor::Motor(byte const pwmPin, byte const dirPin) : m_motorPin(pwmPin), m_dirPi
 
 void Motor::setDir(MOTORDIR const direction) {
 	m_direction = direction;
+	if (m_autoUpdate)
+		update();
 }
 
 void Motor::setSpeed(byte const speed) {
 	m_speed = speed;
+	if (m_autoUpdate)
+		update();
 }
 
 void Motor::incrementSpeed(byte const increment) {
@@ -21,6 +25,8 @@ void Motor::incrementSpeed(byte const increment) {
 		m_speed = 255;
 	else
 		m_speed = m_speed + increment;
+	if (m_autoUpdate)
+		update();
 }
 
 MOTORDIR Motor::getDir() const {
@@ -40,6 +46,8 @@ void Motor::invertDir() {
 		m_direction = ANTI_CLOCKWISE;
 	else
 		m_direction = CLOCKWISE;
+	if (m_autoUpdate)
+		update();
 }
 
 void Motor::update() {
