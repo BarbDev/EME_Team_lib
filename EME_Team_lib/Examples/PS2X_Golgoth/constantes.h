@@ -21,6 +21,14 @@
 #define rumble      false ///<  Prend la valeur true ou false @hideinitializer
 ///@}
 
+/** @name Relais
+ *  Sélection des pins des relais du robot
+ */
+///@{
+#define PIN_RELAIS_1 4
+#define PIN_RELAIS_2 6
+///@}
+
 /** @name Moteur
  *  Sélection des pins de PWM des moteurs du robot
  */
