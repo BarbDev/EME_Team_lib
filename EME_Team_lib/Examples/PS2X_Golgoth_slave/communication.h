@@ -44,16 +44,22 @@ enum ID
 			servo1.write(buffer[1]);					\
 			break;										\
 		case SERVO_2:									\
+			servo2.write(buffer[1]);					\
 			break;										\
 		case SERVO_3:									\
+			servo3.write(buffer[1]);					\
 			break;										\
 		case RELAIS_1:									\
+			relais1.setState(buffer[1]);				\
 			break;										\
 		case RELAIS_2:									\
+			relais2.setState(buffer[1]);				\
 			break;										\
 		case RELAIS_3:									\
+			relais3.setState(buffer[1]);				\
 			break;										\
 		case RELAIS_4:									\
+			relais4.setState(buffer[1]);				\
 			break;										\
 	}													\
 }
