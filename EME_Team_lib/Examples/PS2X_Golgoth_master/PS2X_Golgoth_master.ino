@@ -28,8 +28,10 @@ byte type = 0; // variable stockant le type de contrôleur, voir plus bas pour s
 // fonction obligatoire d'arduino, elle est n'est effectué qu'une
 // fois, à chaque démarrage/reset de la carte
 ////////////////////////////////////////////////////////////
-void setup() { 
+void setup() {
     Serial.begin(57600); // définition de la vitesse de transmission pour pouvoir communiquer avec le PC et avoir un retour sur la console
+    SPI.begin();
+    SPI.setClockDivider(SPI_CLOCK_DIV8);
 
     // Cherche à synchroniser jusqu'à ce que la carte arduino est établi la communication
     do {
@@ -39,8 +41,6 @@ void setup() {
         type = manette.readType(); 
         manette.printCheckControllerType(type); // Permet d'avoir le retour du type de controller dans la console arduino
     } while (error != 0 && type == 0);
-
-    SPI.begin();
 }
 
 
@@ -68,10 +68,18 @@ void loop() {
         else if (manette.Button(PSB_L2))
             envoyer(SERVO_1, 179)
 
-        if (manette.Button(PSB_R1))
-            envoyer(SERVO_2, 0)
-        else if (manette.Button(PSB_R2))
-            envoyer(SERVO_2, 179)
+        if (manette.ButtonPressed(PSB_R1)) {
+            envoyer(RELAIS_1, HIGH)
+            envoyer(RELAIS_2, HIGH)
+            envoyer(RELAIS_3, HIGH)
+            envoyer(RELAIS_4, HIGH)
+        }
+        else if (manette.ButtonReleased(PSB_R1)) {
+            envoyer(RELAIS_1, LOW)
+            envoyer(RELAIS_2, LOW)
+            envoyer(RELAIS_3, LOW)
+            envoyer(RELAIS_4, LOW)
+        }
 
         moteurGauche.update();
         moteurDroit.update();

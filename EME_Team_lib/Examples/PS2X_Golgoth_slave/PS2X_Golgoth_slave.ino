@@ -7,9 +7,9 @@
 #include <Relais.h>
 
 #include "constantes.h"
+#define SLAVE // voir l'effet dans communication.h
 #include "communication.h"
 
-#define SLAVE // voir l'effet dans communication.h
 Servo servo1, servo2, servo3;
 Relais relais1(PIN_RELAIS_1), relais2(PIN_RELAIS_2), relais3(PIN_RELAIS_3), relais4(PIN_RELAIS_4);
 
@@ -25,6 +25,7 @@ void setup() {
     servo2.attach(PIN_SERVO_2, 0, 179);
     servo3.attach(PIN_SERVO_3, 0, 179);
 
+    Serial.println("Initialized");
     initInterrupt()
 }
 
