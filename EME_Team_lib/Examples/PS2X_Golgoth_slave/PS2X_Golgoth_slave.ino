@@ -12,6 +12,8 @@
 
 Servo servo1, servo2, servo3;
 Relais relais1(PIN_RELAIS_1), relais2(PIN_RELAIS_2), relais3(PIN_RELAIS_3), relais4(PIN_RELAIS_4);
+extern volatile boolean process_it;
+extern volatile byte buffer[2];
 
 ////////////////////////////////////////////////////////////
 // fonction obligatoire d'arduino, elle est n'est effectué qu'une
@@ -31,5 +33,9 @@ void setup() {
 
 
 void loop() {
-    // voir communication.h et mettre ses fonctions dans le switch
+    // voir communication.h
+    if (process_it) {
+    	recevoir()
+    	process_it = false;
+    }
 }

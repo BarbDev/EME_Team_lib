@@ -10,10 +10,7 @@
 #include <SPI.h>
 #include "constantes.h"
 
-volatile byte buffer[2] = {0};
-
-enum ID
-{
+enum ID {
 	SERVO_1, SERVO_2, SERVO_3,
 	RELAIS_1, RELAIS_2, RELAIS_3, RELAIS_4
 };
@@ -25,17 +22,27 @@ enum ID
 // ligne, donc la dernière ligne n'a pas d'anti-slash
 ////////////////////////////////////////////////////////////
 
-#define envoyer(id, valeur) {		\
-	digitalWrite(SS, LOW);								\
-	for (byte i = 0; i < 3; ++i) {						\
-		SPI.transfer(0);								\
-	}													\
-	SPI.transfer(id);									\
-	SPI.transfer(valeur);								\
-	digitalWrite(SS, HIGH);								\
-}
+#ifdef MASTER
+
+	#define envoyer(id, valeur) {		\
+		digitalWrite(SS, LOW);								\
+		for (byte i = 0; i < 3; ++i) {						\
+			SPI.transfer(0);								\
+			delay(5);										\
+		}													\
+		SPI.transfer(id);									\
+		delay(5);											\
+		SPI.transfer(valeur);								\
+		delay(5);											\
+		digitalWrite(SS, HIGH);								\
+	}
+
+#endif
+
 // see Gammon arduino site
 #ifdef SLAVE
+	volatile boolean process_it = false;
+	volatile byte buffer[2] = {0};
 
 	#define initInterrupt() {								\
 		SPI.begin();										\
@@ -76,7 +83,6 @@ enum ID
 	}
 
 	ISR (SPI_STC_vect) {
-		Serial.println("Got interrupt");
 	    volatile byte data = SPDR; // stocke la valeur envoyé par le maître
 	    volatile static byte lowerStateCount = 0, dataCount = 0;
 
@@ -90,10 +96,8 @@ enum ID
 	    if (dataCount == 2) {
 	    	lowerStateCount = 0;
 	    	dataCount = 0;
-	    	recevoir();
+	    	process_it = true;
 	    }
-	    Serial.print("Data: ");
-	    Serial.println(data, DEC);
 	}
 #endif
 

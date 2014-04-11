@@ -6,6 +6,7 @@
 #include <Motor.h>
 #include <types.h>
 #include "constantes.h"
+#define MASTER
 #include "communication.h"
 
 PS2X manette; // création d'une classe de type manette
@@ -31,7 +32,7 @@ byte type = 0; // variable stockant le type de contrôleur, voir plus bas pour s
 void setup() {
     Serial.begin(57600); // définition de la vitesse de transmission pour pouvoir communiquer avec le PC et avoir un retour sur la console
     SPI.begin();
-    SPI.setClockDivider(SPI_CLOCK_DIV8);
+    SPI.setClockDivider(SPI_CLOCK_DIV8); // ralenti le l'horloge du micro-contrôleur
 
     // Cherche à synchroniser jusqu'à ce que la carte arduino est établi la communication
     do {
