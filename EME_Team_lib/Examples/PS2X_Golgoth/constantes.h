@@ -26,7 +26,7 @@
  */
 ///@{
 #define PIN_RELAIS_1 4
-#define PIN_RELAIS_2 6
+#define PIN_RELAIS_2 7
 ///@}
 
 /** @name Moteur
@@ -34,23 +34,27 @@
  */
 ///@{
 #define PWM_PIN_MOTOR_1 3
-#define PWM_PIN_MOTOR_2 5
+#define PWM_PIN_MOTOR_2 5 //9
+#define PWM_PIN_MOTOR_3 6 //10
 ///@}
 
 /** @name Direction moteur
  *  Sélection des pins de direction des moteurs du robot
  */
 ///@{
-#define DIR_PIN_MOTOR_1 8
-#define DIR_PIN_MOTOR_2 7
+#define DIR_PIN_MOTOR_1 2
+#define DIR_PIN_MOTOR_2 8
+#define DIR_PIN_MOTOR_3 12
 ///@}
 
 /** @name Servomoteur
  *  Sélection des pins des servomoteurs du robot
  */
 ///@{
-#define PIN_SERVO_1 9
-#define PIN_SERVO_2 10
+#define PIN_SERVO_1 9 //5
+#define PIN_SERVO_2 10 //6
+#define PIN_SERVO_3 11
+#define PIN_SERVO_4 13
 ///@}
 
 /** @name Vitesses des moteurs
