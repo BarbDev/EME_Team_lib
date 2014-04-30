@@ -27,7 +27,6 @@ void setup() {
     servo2.attach(PIN_SERVO_2, 0, 179);
     servo3.attach(PIN_SERVO_3, 0, 179);
 
-    Serial.println("Initialized");
     initInterrupt()
 }
 
