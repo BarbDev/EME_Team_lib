@@ -28,6 +28,16 @@ enum ID {
 		digitalWrite(SS, LOW);								\
 		for (byte i = 0; i < 3; ++i) {						\
 			SPI.transfer(0);								\
+		}													\
+		SPI.transfer(id);									\
+		SPI.transfer(valeur);								\
+		digitalWrite(SS, HIGH);								\
+	}
+
+	#define envoyerAvecDelay(id, valeur) {		\
+		digitalWrite(SS, LOW);								\
+		for (byte i = 0; i < 3; ++i) {						\
+			SPI.transfer(0);								\
 			delay(5);										\
 		}													\
 		SPI.transfer(id);									\
@@ -45,7 +55,7 @@ enum ID {
 	volatile byte buffer[2] = {0};
 
 	#define initInterrupt() {								\
-		SPI.begin();										\
+		SPCR |= _BV(SPE);									\
 		SPI.attachInterrupt();								\
 	}
 
@@ -85,7 +95,7 @@ enum ID {
 	ISR (SPI_STC_vect) {
 	    volatile byte data = SPDR; // stocke la valeur envoyé par le maître
 	    volatile static byte lowerStateCount = 0, dataCount = 0;
-
+	    
 	    if (data == 0 && lowerStateCount != 3) {
 	    	lowerStateCount++;
 	    }
@@ -98,6 +108,8 @@ enum ID {
 	    	dataCount = 0;
 	    	process_it = true;
 	    }
+	    
+	    //Serial.println(data, DEC);
 	}
 #endif
 
