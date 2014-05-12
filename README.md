@@ -10,14 +10,14 @@ une communication entre arduino et des manettes PS2.
 
 INSTALLATION
 ============
-Décompressé l'archive et lors de l'ajout de la bibliothèque dans Arduino, choisir le fichier EME_Team_lib contenant des
+Décompresser l'archive et lors de l'ajout de la bibliothèque dans Arduino, choisir le fichier EME_Team_lib contenant des
 fichiers .h et .cpp ainsi qu'un dossier example et un fichier keywords.txt.
 ATTENTION: il est recommandé de supprimer les autres bibliothèques PS2X_lib éventuellement installé (sauf si leur .h et .cpp portent un autre nom).
 
 DOCUMENTATION
 =============
 Voir le dossier doc et chercher le fichier index.html
-La documentation est toujours en cours de construction.
+La documentation est toujours en cours de construction (incomplète).
 
 TUTORIEL
 ========
