@@ -11,9 +11,11 @@
 #include "constantes.h"
 
 enum ID {
-	SERVO_1, SERVO_2, SERVO_3,
-	RELAIS_1, RELAIS_2, RELAIS_3, RELAIS_4
+	ID_START = 180, SERVO_1, SERVO_2, SERVO_3,
+	RELAIS_1, RELAIS_2, RELAIS_3, RELAIS_4, ID_END
 };
+#define ERROR_VALUE 181
+#define CORRECTLY_RECEIVED 182
 
 ////////////////////////////////////////////////////////////
 // ATTENTION: les macros (#define fonction()) doivent avoir
@@ -24,6 +26,10 @@ enum ID {
 
 #ifdef MASTER
 
+	#define sendWithDelay(valeur) {		\
+		SPI.transfer(valeur);								\
+		delayMicroseconds(100);								\
+	}
 	#define envoyer(id, valeur) {		\
 		digitalWrite(SS, LOW);								\
 		for (byte i = 0; i < 3; ++i) {						\
@@ -46,7 +52,12 @@ enum ID {
 		delay(5);											\
 		digitalWrite(SS, HIGH);								\
 	}
-
+	#define envoiDirecte(id, valeur) {			\
+		digitalWrite(SS, LOW);								\
+		sendWithDelay(id);									\
+		sendWithDelay(valeur);								\
+		digitalWrite(SS, HIGH);								\
+	}
 #endif
 
 // see Gammon arduino site
