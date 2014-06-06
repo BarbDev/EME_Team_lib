@@ -12,14 +12,14 @@ PS2X manette; // création d'une classe de type manette
 
 Motor moteurGauche(PWM_PIN_MOTOR_1, DIR_PIN_MOTOR_1);
 Motor moteurDroit(PWM_PIN_MOTOR_2, DIR_PIN_MOTOR_2);
-Motor moteur3(PWM_PIN_MOTOR_3, DIR_PIN_MOTOR_3);
+Motor moteur3(PWM_PIN_MOTOR_3, DIR_PIN_MOTOR_3), moteur4(PWM_PIN_MOTOR_4, DIR_PIN_MOTOR_4);
 Relais relais1(PIN_RELAIS_1), relais2(PIN_RELAIS_2);
-Servo servo1, servo2, servo3, servo4;
+Servo servo1, servo2, servo3;
 
 int error = 0; // variable stockant le code d'erreur, voir plus bas pour savoir à quelle erreur correspond tel code
 byte type = 0; // variable stockant le type de contrôleur, voir plus bas pour savoir les types possibles
-byte acceleration = 8; // variable stockant l'accélération des moteurs contrôlant les roues du robot
-byte angleServo3 = 0, angleServo4 = 0;
+const byte acceleration = 8; // variable stockant l'accélération des moteurs contrôlant les roues du robot
+byte angleServo2 = 0, angleServo3 = 0;
 
 ////////////////////////////////////////////////////////////
 // fonction obligatoire d'arduino, elle est n'est effectué qu'une
@@ -40,7 +40,6 @@ void setup() {
     servo1.attach(PIN_SERVO_1, 0, 179);
     servo2.attach(PIN_SERVO_2, 0, 179);
     servo3.attach(PIN_SERVO_3, 0, 179);
-    servo4.attach(PIN_SERVO_4, 0, 179);
 }
 
 
@@ -64,63 +63,80 @@ void loop() {
         tank_control_OT();
 
         /* Contrôle du 3eme moteur */
-        if (manette.Button(PSB_CROSS)) {
-            moteur3.setSpeed(255);
+        if (manette.Button(PSB_PAD_UP)) {
+            moteur3.setSpeed(manette.Analog(PSB_PAD_UP));
             moteur3.setDir(CLOCKWISE);
         }
-        else if (manette.Button(PSB_SQUARE)) {
-            moteur3.setSpeed(255);
+        else if (manette.Button(PSB_PAD_DOWN)) {
+            moteur3.setSpeed(manette.Analog(PSB_PAD_UP));
             moteur3.setDir(ANTI_CLOCKWISE);
         }
         else
             moteur3.stop();
 
+        /* Contrôle du 4eme moteur */
+        if (manette.Button(PSB_PAD_RIGHT)) {
+            moteur4.setSpeed(manette.Analog(PSB_PAD_RIGHT));
+            moteur4.setDir(CLOCKWISE);
+        }
+        else if (manette.Button(PSB_PAD_LEFT)) {
+            moteur4.setSpeed(manette.Analog(PSB_PAD_LEFT));
+            moteur4.setDir(ANTI_CLOCKWISE);
+        }
+        else
+            moteur4.stop();
+
         /* Contrôle des servos*/
         /* Servo 1 */
-        if (manette.Button(PSB_L1))
+        if (manette.Button(PSB_SQUARE))
             servo1.write(0);
-        else if (manette.Button(PSB_L2))
+        else if (manette.Button(PSB_CROSS))
             servo1.write(179);
+
         /* Servo 2 */
-        if (manette.Button(PSB_R1))
-            servo2.write(0);
-        else if (manette.Button(PSB_R2))
-            servo2.write(179);
+        if (manette.Button(PSB_R1)) {
+            if (angleServo2 + 1 < 180)
+                angleServo2++;
+            servo2.write(angleServo2);
+        }
+        else if (manette.Button(PSB_R2)) {
+            if (angleServo2 - 1 >= 0)
+                angleServo2--;
+            servo2.write(angleServo2);
+        }
+
         /* Servo 3 */
-        if (manette.Button(PSB_PAD_UP)) {
+        if (manette.Button(PSB_L1)) {
             if (angleServo3 + 1 < 180)
                 angleServo3++;
             servo3.write(angleServo3);
         }
-        else if (manette.Button(PSB_PAD_DOWN)) {
+        else if (manette.Button(PSB_L2)) {
             if (angleServo3 - 1 >= 0)
                 angleServo3--;
             servo3.write(angleServo3);
         }
-        /* Servo 4 */
-        if (manette.Button(PSB_PAD_RIGHT)) {
-            if (angleServo4 + 1 < 180)
-                angleServo4++;
-            servo4.write(angleServo4);
-        }
-        else if (manette.Button(PSB_PAD_LEFT)) {
-            if (angleServo4 - 1 >= 0)
-                angleServo4--;
-            servo4.write(angleServo4);
-        }
 
         /* Contrôle des relais*/
+        /* Relais 1 */
         if (manette.Button(PSB_TRIANGLE))
-            relais1.changeState();
+            relais1.setState(HIGH);
+        else
+            relais1.setState(LOW);
+
+        /* Relais 2 */
         if (manette.Button(PSB_CIRCLE))
-            relais2.changeState();
+            relais2.setState(HIGH);
+        else
+            relais2.setState(LOW);
 
         /* Mise à jour des relais */
         relais1.update();
         relais2.update();
 
-        /* Mise à jour du moteur 3*/
+        /* Mise à jour du moteur 3 et 4*/
         moteur3.update();
+        moteur4.update();
 
         delay(50);  // attend 50ms~
     }
