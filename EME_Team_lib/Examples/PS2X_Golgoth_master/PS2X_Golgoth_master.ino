@@ -13,6 +13,8 @@ PS2X manette; // création d'une classe de type manette
 
 Motor moteurGauche(PWM_PIN_MOTOR_1, DIR_PIN_MOTOR_1);
 Motor moteurDroit(PWM_PIN_MOTOR_2, DIR_PIN_MOTOR_2);
+Motor moteur3(PWM_PIN_MOTOR_3, DIR_PIN_MOTOR_3), moteur4(PWM_PIN_MOTOR_4, DIR_PIN_MOTOR_4);
+byte angleServo2 = 0, angleServo3 = 0;
 
 ////////////////////////////////////////////////////////////
 // ATTENTION:
@@ -32,7 +34,7 @@ byte type = 0; // variable stockant le type de contrôleur, voir plus bas pour s
 void setup() {
     Serial.begin(57600); // définition de la vitesse de transmission pour pouvoir communiquer avec le PC et avoir un retour sur la console
     SPI.begin();
-    SPI.setClockDivider(SPI_CLOCK_DIV8); // ralenti le l'horloge du micro-contrôleur
+    SPI.setClockDivider(SPI_CLOCK_DIV128); // ralenti le l'horloge du micro-contrôleur
 
     // Cherche à synchroniser jusqu'à ce que la carte arduino est établi la communication
     do {
@@ -64,26 +66,89 @@ void loop() {
 
         tank_control_OT();
 
-        if (manette.Button(PSB_L1))
-            envoyer(SERVO_1, 0)
-        else if (manette.Button(PSB_L2))
-            envoyer(SERVO_1, 179)
-
-        if (manette.ButtonPressed(PSB_R1)) {
-            envoyer(RELAIS_1, HIGH)
-            envoyer(RELAIS_2, HIGH)
-            envoyer(RELAIS_3, HIGH)
-            envoyer(RELAIS_4, HIGH)
+        /* Contrôle du 3eme moteur */
+        if (manette.Button(PSB_PAD_UP)) {
+            moteur3.setSpeed(manette.Analog(PSB_PAD_UP));
+            moteur3.setDir(CLOCKWISE);
         }
-        else if (manette.ButtonReleased(PSB_R1)) {
-            envoyer(RELAIS_1, LOW)
-            envoyer(RELAIS_2, LOW)
-            envoyer(RELAIS_3, LOW)
-            envoyer(RELAIS_4, LOW)
+        else if (manette.Button(PSB_PAD_DOWN)) {
+            moteur3.setSpeed(manette.Analog(PSB_PAD_UP));
+            moteur3.setDir(ANTI_CLOCKWISE);
+        }
+        else
+            moteur3.stop();
+
+        /* Contrôle du 4eme moteur */
+        if (manette.Button(PSB_PAD_RIGHT)) {
+            moteur4.setSpeed(manette.Analog(PSB_PAD_RIGHT));
+            moteur4.setDir(CLOCKWISE);
+        }
+        else if (manette.Button(PSB_PAD_LEFT)) {
+            moteur4.setSpeed(manette.Analog(PSB_PAD_LEFT));
+            moteur4.setDir(ANTI_CLOCKWISE);
+        }
+        else
+            moteur4.stop();
+
+        /* Mise à jour du moteur 3 et 4*/
+        moteur3.update();
+        moteur4.update();
+
+        /* Contrôle des servos*/
+        /* Servo 1 */
+        if (manette.Button(PSB_SQUARE))
+            envoiDirecte(SERVO_1, 0)
+        else if (manette.Button(PSB_CROSS))
+            envoiDirecte(SERVO_1, 179)
+
+        /* Servo 2 */
+        if (manette.Button(PSB_R1)) {
+            if (angleServo2 + 1 < 180)
+                angleServo2++;
+            envoiDirecte(SERVO_2, angleServo2)
+        }
+        else if (manette.Button(PSB_R2)) {
+            if (angleServo2 - 1 >= 0)
+                angleServo2--;
+            envoiDirecte(SERVO_2, angleServo2)
         }
 
-        moteurGauche.update();
-        moteurDroit.update();
+        /* Servo 3 */
+        if (manette.Button(PSB_L1)) {
+            if (angleServo3 + 1 < 180)
+                angleServo3++;
+            envoiDirecte(SERVO_3, angleServo3)
+        }
+        else if (manette.Button(PSB_L2)) {
+            if (angleServo3 - 1 >= 0)
+                angleServo3--;
+            envoiDirecte(SERVO_3, angleServo3)
+        }
+
+        /* Contrôle des relais*/
+        /* Relais 1 */
+        if (manette.Button(PSB_TRIANGLE))
+            envoiDirecte(RELAIS_1, HIGH)
+        else
+            envoiDirecte(RELAIS_1, LOW)
+
+        /* Relais 2 */
+        if (manette.Button(PSB_CIRCLE))
+            envoiDirecte(RELAIS_2, HIGH)
+        else
+            envoiDirecte(RELAIS_2, LOW)
+
+        /* Relais 3 */
+        if (manette.Button(PSB_SELECT))
+            envoiDirecte(RELAIS_3, HIGH)
+        else
+            envoiDirecte(RELAIS_3, LOW)
+
+        /* Relais 4 */
+        if (manette.Button(PSB_START))
+            envoiDirecte(RELAIS_4, HIGH)
+        else
+            envoiDirecte(RELAIS_4, LOW)
 
         delay(50);  // attend 50ms~
     }
