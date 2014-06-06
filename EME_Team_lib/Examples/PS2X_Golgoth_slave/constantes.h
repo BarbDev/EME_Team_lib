@@ -5,9 +5,9 @@
  *  Sélection des pins des servomoteurs du robot
  */
 ///@{
-#define PIN_SERVO_1 3
-#define PIN_SERVO_2 9
-#define PIN_SERVO_3 10
+#define PIN_SERVO_1 1
+#define PIN_SERVO_2 3
+#define PIN_SERVO_3 9
 ///@}
 
 /** @name Relais
@@ -19,12 +19,5 @@
 #define PIN_RELAIS_3 6
 #define PIN_RELAIS_4 7
  ///@}
-
-/** @name Vitesses des moteurs
- */
-///@{
-#define VITESSE_MAX 255
-#define VITESSE_MIN 0
-///@}
 
 #endif // !CONSTANTES_H

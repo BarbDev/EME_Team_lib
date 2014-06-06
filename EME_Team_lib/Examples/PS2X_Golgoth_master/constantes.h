@@ -27,14 +27,18 @@
 ///@{
 #define PWM_PIN_MOTOR_1 3
 #define PWM_PIN_MOTOR_2 5
+#define PWM_PIN_MOTOR_3 6
+#define PWM_PIN_MOTOR_4 9
 ///@}
 
 /** @name Direction moteur
  *  Sélection des pins de direction des moteurs du robot
  */
 ///@{
-#define DIR_PIN_MOTOR_1 8
-#define DIR_PIN_MOTOR_2 7
+#define DIR_PIN_MOTOR_1 2
+#define DIR_PIN_MOTOR_2 4
+#define DIR_PIN_MOTOR_3 7
+#define DIR_PIN_MOTOR_4 8
 ///@}
 
 /** @name Vitesses des moteurs
