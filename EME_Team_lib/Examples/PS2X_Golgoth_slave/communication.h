@@ -11,8 +11,8 @@
 #include "constantes.h"
 
 enum ID {
-	SERVO_1, SERVO_2, SERVO_3,
-	RELAIS_1, RELAIS_2, RELAIS_3, RELAIS_4
+	ID_START = 180, SERVO_1, SERVO_2, SERVO_3,
+	RELAIS_1, RELAIS_2, RELAIS_3, RELAIS_4, ID_END
 };
 
 ////////////////////////////////////////////////////////////
@@ -51,8 +51,9 @@ enum ID {
 
 // see Gammon arduino site
 #ifdef SLAVE
-	volatile boolean process_it = false;
-	volatile byte buffer[2] = {0};
+	//volatile boolean process_it = false;
+	//volatile byte buffer[2] = {0};
+	volatile byte IDs[7] = {0};
 
 	#define initInterrupt() {								\
 		SPCR |= _BV(SPE);									\
@@ -63,6 +64,8 @@ enum ID {
 	extern Relais relais1, relais2, relais3, relais4;
 
 	#define recevoir() {									\
+		Serial.print("ID: "); Serial.println(buffer[0], DEC);	\
+		Serial.print("Valeur: "); Serial.println(buffer[1], DEC);	\
 		switch(buffer[0]) {									\
 			case SERVO_1:									\
 				servo1.write(buffer[1]);					\
@@ -94,8 +97,11 @@ enum ID {
 
 	ISR (SPI_STC_vect) {
 	    volatile byte data = SPDR; // stocke la valeur envoyé par le maître
-	    volatile static byte lowerStateCount = 0, dataCount = 0;
+	    static byte dataCount = 0, id = 0;
+
+	    // static byte lowerStateCount = 0;
 	    
+	    /*
 	    if (data == 0 && lowerStateCount != 3) {
 	    	lowerStateCount++;
 	    }
@@ -107,9 +113,31 @@ enum ID {
 	    	lowerStateCount = 0;
 	    	dataCount = 0;
 	    	process_it = true;
+	    }*/
+
+	    /*if (dataCount > 1)
+	    	dataCount = 0;
+	    buffer[dataCount] = data;
+	    dataCount++;
+	    if (dataCount >= 2)
+	    	process_it = true;*/
+
+	    if (dataCount == 0) {
+	    	id = data;
+	    	dataCount++;
+	    	if (id <= ID_START && id >= ID_END) {
+	    		dataCount = 0;
+	    		return;
+	    	}
 	    }
-	    
-	    //Serial.println(data, DEC);
+	    else if (dataCount > 0) {
+	    	id -= 181;
+	    	IDs[id] = data;
+	    	dataCount = 0;
+	    }
+
+	    Serial.println(data, DEC);
+
 	}
 #endif
 
