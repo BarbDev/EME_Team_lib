@@ -41,11 +41,4 @@
 #define DIR_PIN_MOTOR_4 8
 ///@}
 
-/** @name Vitesses des moteurs
- */
-///@{
-#define VITESSE_MAX 255
-#define VITESSE_MIN 0
-///@}
-
 #endif // !CONSTANTES_H
