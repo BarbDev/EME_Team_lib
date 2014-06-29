@@ -6,8 +6,7 @@
 #include <Motor.h>
 #include <types.h>
 #include "constantes.h"
-#define MASTER
-#include "communication.h"
+#include "communicationM.h"
 
 PS2X manette; // création d'une classe de type manette
 
@@ -16,19 +15,13 @@ Motor moteurDroit(PWM_PIN_MOTOR_2, DIR_PIN_MOTOR_2);
 Motor moteur3(PWM_PIN_MOTOR_3, DIR_PIN_MOTOR_3), moteur4(PWM_PIN_MOTOR_4, DIR_PIN_MOTOR_4);
 byte angleServo2 = 0, angleServo3 = 0;
 
-////////////////////////////////////////////////////////////
-// ATTENTION:
-// pour le moment la bibliothèque ne supporte la connection des
-// contrôleurs à chaud. Il faut donc soit redémarrer la carte
-// arduino après avoir connecté le contrôleur, soit faire de
-// nouveau appel à la fonction config_gamepad(...)
-////////////////////////////////////////////////////////////
-
 int error = 0; // variable stockant le code d'erreur, voir plus bas pour savoir à quelle erreur correspond tel code
 byte type = 0; // variable stockant le type de contrôleur, voir plus bas pour savoir les types possibles
 
+const byte acceleration = 8; // variable représentant l'incrémentation de la vitesse des moteurs
+
 ////////////////////////////////////////////////////////////
-// fonction obligatoire d'arduino, elle est n'est effectué qu'une
+// fonction obligatoire d'arduino, elle est effectué qu'une
 // fois, à chaque démarrage/reset de la carte
 ////////////////////////////////////////////////////////////
 void setup() {
@@ -53,26 +46,31 @@ void loop() {
     // on doit lire la manette pour recevoir les nouvelles valeurs,
     // ainsi que pour définir les vibrations manette.read_gamepad(small motor
     // on/off,larger motor strenght from 0-255)
-    // si rumble est a false, appeler simplement manette.read_gamepad();
+    // si rumble est à false, appeler simplement manette.read_gamepad();
     // il faudrait lire la manette au moins une fois toutes les secondes
     ////////////////////////////////////////////////////////////
 
 
     if(error == 1)
-        delay(5000); // fait attendre le micro-contôleur pour évité qu'il tourne pour rien.
+        delay(5000); // Fait attendre le micro-contôleur pour évité qu'il tourne pour rien.
+                     // Au lieu de ça, appeler manette.config_gamepad afin d'essayer de se resynchroniser ?
 
-    else if (type == 1 || type == 3) { //DualShock Controller (avec ou sans fil trouvée)
+    else if (type == 1 || type == 3) { //DualShock Controller (avec ou sans fil, trouvée)
         manette.read_gamepad(); // lit les données de la manette
 
+        /* Fonctions concernant le déplacement du robot (déclarée plus bas) */
         tank_control_OT();
+        //regular_control_OT();
 
         /* Contrôle du 3eme moteur */
         if (manette.Button(PSB_PAD_UP)) {
-            moteur3.setSpeed(manette.Analog(PSB_PAD_UP));
+            const byte vitesse = manette.Analog(PSAB_PAD_UP)
+            moteur3.setSpeed(vitesse);
             moteur3.setDir(CLOCKWISE);
         }
         else if (manette.Button(PSB_PAD_DOWN)) {
-            moteur3.setSpeed(manette.Analog(PSB_PAD_UP));
+            const byte vitesse = manette.Analog(PSAB_PAD_DOWN);
+            moteur3.setSpeed(vitesse);
             moteur3.setDir(ANTI_CLOCKWISE);
         }
         else
@@ -80,11 +78,13 @@ void loop() {
 
         /* Contrôle du 4eme moteur */
         if (manette.Button(PSB_PAD_RIGHT)) {
-            moteur4.setSpeed(manette.Analog(PSB_PAD_RIGHT));
+            const byte vitesse = manette.Analog(PSAB_PAD_RIGHT);
+            moteur4.setSpeed(vitesse);
             moteur4.setDir(CLOCKWISE);
         }
         else if (manette.Button(PSB_PAD_LEFT)) {
-            moteur4.setSpeed(manette.Analog(PSB_PAD_LEFT));
+            const byte vitesse = manette.Analog(PSAB_PAD_LEFT);
+            moteur4.setSpeed(vitesse);
             moteur4.setDir(ANTI_CLOCKWISE);
         }
         else
@@ -96,18 +96,18 @@ void loop() {
 
         /* Contrôle des servos*/
         /* Servo 1 */
-        if (manette.Button(PSB_SQUARE))
+        if (manette.ButtonPressed(PSB_SQUARE))
             envoiDirecte(SERVO_1, 0)
-        else if (manette.Button(PSB_CROSS))
+        else if (manette.ButtonReleased(PSB_CROSS))
             envoiDirecte(SERVO_1, 179)
 
         /* Servo 2 */
-        if (manette.Button(PSB_R1)) {
+        if (manette.ButtonPressed(PSB_R1)) {
             if (angleServo2 + 1 < 180)
                 angleServo2++;
             envoiDirecte(SERVO_2, angleServo2)
         }
-        else if (manette.Button(PSB_R2)) {
+        else if (manette.ButtonReleased(PSB_R2)) {
             if (angleServo2 - 1 >= 0)
                 angleServo2--;
             envoiDirecte(SERVO_2, angleServo2)
@@ -127,41 +127,58 @@ void loop() {
 
         /* Contrôle des relais*/
         /* Relais 1 */
-        if (manette.Button(PSB_TRIANGLE))
+        if (manette.ButtonPressed(PSB_TRIANGLE))
             envoiDirecte(RELAIS_1, HIGH)
-        else
+        else if (manette.ButtonReleased(PSB_TRIANGLE))
             envoiDirecte(RELAIS_1, LOW)
 
         /* Relais 2 */
-        if (manette.Button(PSB_CIRCLE))
+        if (manette.ButtonPressed(PSB_CIRCLE))
             envoiDirecte(RELAIS_2, HIGH)
-        else
+        else if (manette.ButtonReleased(PSB_CIRCLE))
             envoiDirecte(RELAIS_2, LOW)
 
         /* Relais 3 */
-        if (manette.Button(PSB_SELECT))
+        if (manette.ButtonPressed(PSB_SELECT))
             envoiDirecte(RELAIS_3, HIGH)
-        else
+        else if (manette.ButtonReleased(PSB_SELECT))
             envoiDirecte(RELAIS_3, LOW)
 
         /* Relais 4 */
-        if (manette.Button(PSB_START))
+        if (manette.ButtonPressed(PSB_START))
             envoiDirecte(RELAIS_4, HIGH)
-        else
+        else if (manette.ButtonReleased(PSB_START))
             envoiDirecte(RELAIS_4, LOW)
 
-        delay(50);  // attend 50ms~
+        delay(50);  // attend 50ms~ Amélioration: diminuer au maximum cette valeur pour une meilleur
+                    // réaction du robot par rapport aux commandes.
     }
 }
 
+////////////////////////////////////////////////////////////
+// Déclaration et définition de fonctions.
+// Il faut savoir que dans le fichier principale .ino,
+// arduino s'occupe lui même de déclarer les fonctions.
+// Cela permet de ne pas avoir à le faire au début du fichier
+// rendant le code plus claire et permettant l'appel des
+// fonctions avant leur déclaration.
+////////////////////////////////////////////////////////////
+
+
+////////////////////////////////////////////////////////////
+// Fonction assignant chaque joystick à une roue du robot.
+// La vitesse est incrémenté au cours du temps. L'accélération
+// peut être modifié par la variable 'acceleration' déclarée
+// au début du fichier.
+////////////////////////////////////////////////////////////
 void tank_control_OT() {
     /* Roue droite */
-    if (manette.Analog(PSS_RY) == 255) {
-        moteurDroit.incrementSpeed(5);
+    if (manette.Analog(PSS_RY) == 255) { // Si le joystick droit est complétement vers le haut
+        moteurDroit.incrementSpeed(acceleration);
         moteurDroit.setDir(CLOCKWISE);
     }
     else if (manette.Analog(PSS_RY) == 0) {
-        moteurDroit.incrementSpeed(5);
+        moteurDroit.incrementSpeed(acceleration);
         moteurDroit.setDir(ANTI_CLOCKWISE);
     }
     else
@@ -169,11 +186,11 @@ void tank_control_OT() {
 
     /* Roue gauche */
     if (manette.Analog(PSS_LY) == 255) {
-        moteurGauche.incrementSpeed(5);
+        moteurGauche.incrementSpeed(acceleration);
         moteurGauche.setDir(CLOCKWISE);
     }
     else if (manette.Analog(PSS_LY) == 0) {
-        moteurGauche.incrementSpeed(5);
+        moteurGauche.incrementSpeed(acceleration);
         moteurGauche.setDir(ANTI_CLOCKWISE);
     }
     else
@@ -184,18 +201,25 @@ void tank_control_OT() {
     moteurDroit.update();
 }
 
+////////////////////////////////////////////////////////////
+// Fonction assignant le joystick droit à l'accélération du
+// robot et le joystick gauche à la direction du robot.
+// La vitesse est incrémenté au cours du temps. L'accélération
+// peut être modifié par la variable 'acceleration' déclarée
+// au début du fichier.
+////////////////////////////////////////////////////////////
 void regular_control_OT() {
     /* Contrôle de la vitesse de déplacement avec le joystick droit*/
     if (manette.Analog(PSS_RY) == 255) {
-        moteurDroit.incrementSpeed(5);
+        moteurDroit.incrementSpeed(acceleration);
         moteurDroit.setDir(CLOCKWISE);
-        moteurGauche.incrementSpeed(5);
+        moteurGauche.incrementSpeed(acceleration);
         moteurGauche.setDir(CLOCKWISE);
     }
     else if (manette.Analog(PSS_RY) == 0) {
-        moteurDroit.incrementSpeed(5);
+        moteurDroit.incrementSpeed(acceleration);
         moteurDroit.setDir(ANTI_CLOCKWISE);
-        moteurGauche.incrementSpeed(5);
+        moteurGauche.incrementSpeed(acceleration);
         moteurGauche.setDir(ANTI_CLOCKWISE);
     }
     else {
