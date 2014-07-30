@@ -14,11 +14,11 @@
 class Motor {
 public:
 	////////////////////////////////////////////////////////////
-    /// \brief Initialise les pin en sorti, et les membres de la classe.
+    /// \brief Initialise les pin en sortie et les membres de la classe.
     ///
     /// \param pwmPin Numéro de pin correspondant à la PWM du moteur
     /// \param dirPin Numéro de pin correspondant à la DIRECTION du moteur
-    /// \param autoUpdate Indique si le relais se met à jour dès son changement d'état
+    /// \param autoUpdate Indique si le relais se met à jour dès son changement d'état (par défaut non)
     ///
     ////////////////////////////////////////////////////////////
 	Motor(byte const pwmPin, byte const dirPin, boolean const autoUpdate = false);
@@ -27,6 +27,7 @@ public:
     /// \brief Permet de changer le sens de rotation du moteur
     ///
     /// \param direction Indique le nouveau sens de rotation à prendre
+    /// \see MOTORDIR
     ///
     ////////////////////////////////////////////////////////////
 	void setDir(MOTORDIR const direction);

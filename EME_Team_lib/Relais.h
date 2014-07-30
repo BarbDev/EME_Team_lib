@@ -24,7 +24,7 @@ public:
 	////////////////////////////////////////////////////////////
     /// \brief Permet de changer l'état du relais (ouvert ou fermé)
     ///
-    /// \param state Indique le nouvel état du relais
+    /// \param state Indique le nouvel état du relais (1 ou 0 - HIGH ou LOW)
     ///
     ////////////////////////////////////////////////////////////
 	void setState(byte const state);

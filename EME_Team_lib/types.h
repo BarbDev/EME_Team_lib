@@ -23,6 +23,9 @@ enum JOYSTICKCOMMAND {
 
 ////////////////////////////////////////////////////////////
 /// Définition des différents sens de rotation d'un moteur
+/// Attention, ces derniers peuvent être inversé selon la
+/// configuration de la carte arduino ou selon le cablage
+/// du moteur.
 ////////////////////////////////////////////////////////////
 enum MOTORDIR {
     CLOCKWISE = 1,		///<  Sens horaire @hideinitializer
