@@ -64,7 +64,7 @@ void loop() {
 
         /* Contrôle du 3eme moteur */
         if (manette.Button(PSB_PAD_UP)) {
-            const byte vitesse = manette.Analog(PSAB_PAD_UP)
+            const byte vitesse = manette.Analog(PSAB_PAD_UP);
             moteur3.setSpeed(vitesse);
             moteur3.setDir(CLOCKWISE);
         }
